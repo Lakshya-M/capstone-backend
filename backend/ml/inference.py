@@ -6,8 +6,9 @@ from __future__ import annotations
 
 import glob
 import os
+import threading
 from dataclasses import dataclass
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
@@ -61,14 +62,13 @@ def _find_latest_model_prefix() -> Tuple[str, str]:
     return latest_model, norm_path
 
 
-def load_latest_model_bundle() -> LoadedModelBundle:
-    """
-    Load the most recently trained model and its normalization / threshold metadata.
+_bundle_lock = threading.Lock()
+_bundle_cache: Optional[LoadedModelBundle] = None
+_bundle_cache_key: Optional[Tuple[str, str, float]] = None
 
-    Returns:
-        LoadedModelBundle: Loaded Keras model and metadata.
-    """
-    model_path, norm_path = _find_latest_model_prefix()
+
+def _load_bundle_from_disk(model_path: str, norm_path: str) -> LoadedModelBundle:
+    """Read norm metadata and load Keras model from disk (slow — avoid repeating per request)."""
     data = np.load(norm_path, allow_pickle=True)
 
     mean = data["mean"]
@@ -88,9 +88,29 @@ def load_latest_model_bundle() -> LoadedModelBundle:
         feature_columns=feature_columns,
         model=keras_model,
     )
-    # Attach stats for convenience
     bundle.norm_stats = stats  # type: ignore[attr-defined]
     return bundle
+
+
+def load_latest_model_bundle() -> LoadedModelBundle:
+    """
+    Load the most recently trained model and its normalization / threshold metadata.
+
+    The Keras model is cached in memory after the first load. The cache is invalidated
+    when the newest ``*.keras`` file path or modification time changes (e.g. new train).
+    """
+    global _bundle_cache, _bundle_cache_key
+
+    model_path, norm_path = _find_latest_model_prefix()
+    key = (model_path, norm_path, os.path.getmtime(model_path))
+
+    with _bundle_lock:
+        if _bundle_cache is not None and _bundle_cache_key == key:
+            return _bundle_cache
+        bundle = _load_bundle_from_disk(model_path, norm_path)
+        _bundle_cache = bundle
+        _bundle_cache_key = key
+        return bundle
 
 
 def run_anomaly_detection_on_dataframe(
