@@ -1,0 +1,23 @@
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Node
+node_modules/
+aqi-dashboard/dist/
+
+# Local / secrets
+.env
+.env.*
+*.db
+
+# IDE
+.idea/
+.vscode/
+
+
+Codes/file1.txt

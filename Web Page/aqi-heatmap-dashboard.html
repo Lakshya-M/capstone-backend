@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<!--
+  AQI Heatmap Dashboard — Digital Twin
+  To use YOUR floor plan: replace the <svg>...</svg> inside .svg-container with your SVG.
+  In your SVG, find the three black sensor circles and add: id="node1", id="node2", id="node3" and class="node-circle"
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AQI Sensor Heatmap — Digital Twin</title>
+  <style>
+    * { box-sizing: border-box; }
+    :root {
+      --bg-dark: #0f1419;
+      --bg-panel: #1a2332;
+      --border: #2d3a4d;
+      --text: #e6edf3;
+      --text-muted: #8b949e;
+      --accent: #58a6ff;
+    }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 1rem;
+    }
+    .dashboard {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0 0 1rem 0;
+      color: var(--text);
+    }
+    .panel {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 1rem;
+    }
+    .panel label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+    .panel input[type="number"] {
+      width: 72px;
+      padding: 0.4rem 0.5rem;
+      background: var(--bg-dark);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+    .panel input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    .btn {
+      padding: 0.5rem 1rem;
+      background: var(--accent);
+      border: none;
+      border-radius: 6px;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .btn:hover { filter: brightness(1.1); }
+    .btn:active { filter: brightness(0.95); }
+    .svg-container {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      overflow: auto;
+    }
+    .svg-container svg {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+    .svg-container svg .node-circle {
+      transition: fill 0.45s ease, filter 0.45s ease, opacity 0.45s ease;
+    }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 0;
+      margin-bottom: 0.5rem;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .legend-box {
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .values-display {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      padding-bottom: 1rem;
+    }
+    .values-display span { margin-right: 1rem; }
+    @media (max-width: 600px) {
+      .panel { flex-direction: column; align-items: stretch; }
+      .panel label { justify-content: space-between; }
+      .panel input[type="number"] { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <h1>AQI Sensor Heatmap — Digital Twin</h1>
+
+    <div class="panel">
+      <label>AQI Node 1 <input type="number" id="aqi1" min="0" value="0" placeholder="0–500"></label>
+      <label>AQI Node 2 <input type="number" id="aqi2" min="0" value="0" placeholder="0–500"></label>
+      <label>AQI Node 3 <input type="number" id="aqi3" min="0" value="0" placeholder="0–500"></label>
+      <button class="btn" id="generateBtn">Generate Heatmap</button>
+    </div>
+
+    <div class="svg-container">
+      <!-- Your floor plan: 3 black dots = sensor positions (node1, node2, node3) -->
+      <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1920 1080" style="enable-background:new 0 0 1920 1080;" xml:space="preserve">
+        <style type="text/css">
+          .st0{fill:#FFFFFF;stroke:#000000;stroke-miterlimit:10;}
+          .st1{fill:#FFFFFF;stroke:#000000;stroke-width:3;stroke-miterlimit:10;}
+          .st2{fill:none;}
+          .st3{font-family:'SourceSansPro-Regular', sans-serif;}
+          .st4{font-size:48px;}
+          .st5{letter-spacing:4;}
+        </style>
+        <defs>
+          <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
+            <feMerge>
+              <feMergeNode in="blur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+          <filter id="glow-strong" x="-100%" y="-100%" width="300%" height="300%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur"/>
+            <feMerge>
+              <feMergeNode in="blur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+          <filter id="glow-heat" x="-120%" y="-120%" width="340%" height="340%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="blur"/>
+            <feMerge>
+              <feMergeNode in="blur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+        <rect x="247.5" y="157.94" class="st0" width="1428" height="762"/>
+        <rect x="1037.5" y="157.94" class="st1" width="108" height="381"/>
+        <rect x="1146.5" y="157.94" class="st0" width="529" height="381"/>
+        <rect x="847.5" y="734.94" class="st0" width="828" height="185"/>
+        <rect x="383.65" y="670.79" class="st0" width="425" height="249.16"/>
+        <rect x="449.83" y="157.94" class="st0" width="452" height="358"/>
+        <rect x="1663.5" y="557.13" class="st0" width="12" height="161"/>
+        <rect x="1608.33" y="584.13" transform="matrix(0.7071 -0.7071 0.7071 0.7071 2.8637 1336.1719)" class="st0" width="12" height="161"/>
+        <rect x="247.5" y="246.85" class="st0" width="21.27" height="584.18"/>
+        <rect x="629.83" y="310.46" class="st2" width="92" height="52.96"/>
+        <text transform="matrix(1 0 0 1 629.8301 344.6381)" class="st3 st4 st5">BED</text>
+        <rect x="524.15" y="764.37" class="st2" width="144" height="62"/>
+        <text transform="matrix(1 0 0 1 524.1503 798.5414)" class="st3 st4 st5">TABLE</text>
+        <rect x="1281" y="311.7" class="st2" width="260" height="50.49"/>
+        <text transform="matrix(1 0 0 1 1280.9993 345.8745)" class="st3 st4 st5">RESTROOM</text>
+        <rect x="1162.78" y="800.64" class="st2" width="236.44" height="53.62"/>
+        <text transform="matrix(1 0 0 1 1162.7802 834.8112)" class="st3 st4 st5">WARDROBE</text>
+        <!-- Sensor 1: top-left | Sensor 2: bottom-left | Sensor 3: near wardrobe -->
+        <circle id="node1" class="node-circle" cx="275.3" cy="184" r="12" fill="black" filter="url(#glow)"/>
+        <circle id="node2" class="node-circle" cx="275.3" cy="900" r="12" fill="black" filter="url(#glow)"/>
+        <circle id="node3" class="node-circle" cx="1399.22" cy="625.63" r="12" fill="black" filter="url(#glow)"/>
+        <rect x="1062.5" y="314.44" class="st2" width="58" height="45"/>
+        <text transform="matrix(1 0 0 1 1062.4987 348.6193)" class="st3 st4 st5">AC</text>
+      </svg>
+    </div>
+
+    <div class="legend">
+      <span class="legend-item"><span class="legend-box" style="background:#00e400;"></span> Good (0–50)</span>
+      <span class="legend-item"><span class="legend-box" style="background:#ffff00;"></span> Moderate (51–100)</span>
+      <span class="legend-item"><span class="legend-box" style="background:#ff7e00;"></span> Unhealthy (101–150)</span>
+      <span class="legend-item"><span class="legend-box" style="background:#ff0000;"></span> Unhealthy+ (151–200)</span>
+      <span class="legend-item"><span class="legend-box" style="background:#7e0023;"></span> Hazardous (201+)</span>
+    </div>
+    <div class="values-display" id="valuesDisplay">Node 1: — | Node 2: — | Node 3: —</div>
+  </div>
+
+  <script>
+    (function () {
+      var aqiToColor = function (aqi) {
+        var n = Number(aqi) || 0;
+        if (n <= 50) return '#00e400';
+        if (n <= 100) return '#ffff00';
+        if (n <= 150) return '#ff7e00';
+        if (n <= 200) return '#ff0000';
+        return '#7e0023';
+      };
+
+      var nodes = [
+        { id: 'node1', inputId: 'aqi1' },
+        { id: 'node2', inputId: 'aqi2' },
+        { id: 'node3', inputId: 'aqi3' }
+      ];
+
+      function getGlowFilter(aqi) {
+        if (aqi <= 0) return 'url(#glow)';
+        if (aqi <= 100) return 'url(#glow-strong)';
+        return 'url(#glow-heat)';
+      }
+
+      function applyHeatmap() {
+        var values = [];
+        nodes.forEach(function (n) {
+          var el = document.getElementById(n.id);
+          var input = document.getElementById(n.inputId);
+          var aqi = Number(input.value) || 0;
+          values.push('Node ' + n.id.replace('node', '') + ': ' + aqi);
+          if (el) {
+            el.style.fill = aqiToColor(aqi);
+            el.style.opacity = '0.6';
+            el.setAttribute('filter', getGlowFilter(aqi));
+          }
+        });
+        document.getElementById('valuesDisplay').textContent = values.join(' | ');
+      }
+
+      document.getElementById('generateBtn').addEventListener('click', applyHeatmap);
+    })();
+  </script>
+</body>
+</html>

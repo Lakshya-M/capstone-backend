@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Adobe Illustrator 24.2.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 1920 1080" style="enable-background:new 0 0 1920 1080;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#FFFFFF;stroke:#000000;stroke-miterlimit:10;}
+	.st1{fill:#FFFFFF;stroke:#000000;stroke-width:3;stroke-miterlimit:10;}
+	.st2{fill:none;}
+	.st3{font-family:'SourceSansPro-Regular';}
+	.st4{font-size:48px;}
+	.st5{letter-spacing:4;}
+</style>
+<rect x="247.5" y="157.94" class="st0" width="1428" height="762"/>
+<rect x="1037.5" y="157.94" class="st1" width="108" height="381"/>
+<rect x="1146.5" y="157.94" class="st0" width="529" height="381"/>
+<rect x="847.5" y="734.94" class="st0" width="828" height="185"/>
+<rect x="383.65" y="670.79" class="st0" width="425" height="249.16"/>
+<rect x="449.83" y="157.94" class="st0" width="452" height="358"/>
+<rect x="1663.5" y="557.13" class="st0" width="12" height="161"/>
+<rect x="1608.33" y="584.13" transform="matrix(0.7071 -0.7071 0.7071 0.7071 2.8637 1336.1719)" class="st0" width="12" height="161"/>
+<rect x="247.5" y="246.85" class="st0" width="21.27" height="584.18"/>
+<rect x="629.83" y="310.46" class="st2" width="92" height="52.96"/>
+<text transform="matrix(1 0 0 1 629.8301 344.6381)" class="st3 st4 st5">BED</text>
+<rect x="524.15" y="764.37" class="st2" width="144" height="62"/>
+<text transform="matrix(1 0 0 1 524.1503 798.5414)" class="st3 st4 st5">TABLE</text>
+<rect x="1281" y="311.7" class="st2" width="260" height="50.49"/>
+<text transform="matrix(1 0 0 1 1280.9993 345.8745)" class="st3 st4 st5">RESTROOM</text>
+<rect x="1162.78" y="800.64" class="st2" width="236.44" height="53.62"/>
+<text transform="matrix(1 0 0 1 1162.7802 834.8112)" class="st3 st4 st5">WARDROBE</text>
+<!-- Sensor 1: top-left -->
+<circle id="node1" class="node-circle" cx="275.3" cy="184" r="12" fill="black"/>
+<!-- Sensor 2: bottom-left -->
+<circle id="node2" class="node-circle" cx="275.3" cy="900" r="12" fill="black"/>
+<!-- Sensor 3: near wardrobe/restroom -->
+<circle id="node3" class="node-circle" cx="1399.22" cy="625.63" r="12" fill="black"/>
+<rect x="1062.5" y="314.44" class="st2" width="58" height="45"/>
+<text transform="matrix(1 0 0 1 1062.4987 348.6193)" class="st3 st4 st5">AC</text>
+</svg>

@@ -1,0 +1,10 @@
+# Backend API (Render / production). Pin loosely for Linux builds.
+fastapi>=0.110,<1
+uvicorn[standard]>=0.27,<1
+sqlalchemy>=2.0,<3
+pydantic>=2.0,<3
+pandas>=2.0,<3
+numpy>=1.26,<2
+python-dotenv>=1.0,<2
+tensorflow>=2.15,<3
+psycopg2-binary>=2.9,<3
