@@ -18,6 +18,8 @@ from __future__ import annotations
 from sqlalchemy import text
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.openapi.docs import get_redoc_html, get_swagger_ui_html
+from fastapi.responses import HTMLResponse
 
 from .database import Base, engine
 from .routes import energy, ingest, ml, twin
@@ -49,7 +51,8 @@ def create_app() -> FastAPI:
             "Train the LSTM autoencoder on CSV data, then use **POST /api/ingest** to submit "
             "readings—the response shows whether each reading was flagged as an anomaly."
         ),
-        docs_url="/docs",
+        docs_url=None,
+        redoc_url=None,
         openapi_tags=[
             {"name": "Ingest sensor data", "description": "Submit readings; response includes anomaly (normal vs anomaly)."},
             {"name": "ml", "description": "Train model on CSV and run anomaly detection on stored data."},
@@ -70,6 +73,21 @@ def create_app() -> FastAPI:
     app.include_router(ml.router, prefix="/api")
     app.include_router(energy.router, prefix="/api")
     app.include_router(twin.router, prefix="/api")
+
+    # Explicit /openapi.json URL so Swagger works behind Render/proxies (avoids root_path mismatch).
+    @app.get("/docs", include_in_schema=False)
+    async def swagger_ui() -> HTMLResponse:
+        return get_swagger_ui_html(
+            openapi_url="/openapi.json",
+            title=f"{app.title} - Swagger UI",
+        )
+
+    @app.get("/redoc", include_in_schema=False)
+    async def redoc_ui() -> HTMLResponse:
+        return get_redoc_html(
+            openapi_url="/openapi.json",
+            title=f"{app.title} - ReDoc",
+        )
 
     @app.get("/health", tags=["system"])
     async def health_check() -> dict[str, str]:
